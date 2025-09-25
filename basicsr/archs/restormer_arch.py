@@ -1,3 +1,7 @@
+
+## Created by lishen qu 
+## comfirm the result of Restormer of the Flare7K in 9/11
+##
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -190,7 +194,7 @@ class Upsample(nn.Module):
 class Restormer(nn.Module):
     def __init__(self, 
         img_ch=3, 
-        output_ch=6, 
+        output_ch=3, 
         dim = 16,
         num_blocks = [4,6,6,8], 
         num_refinement_blocks = 1,

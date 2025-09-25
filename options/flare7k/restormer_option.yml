@@ -1,5 +1,5 @@
 # general settings
-name: HINet_baseline_option.yml
+name: Restormer_baseline_option.yml
 model_type: DeflareModel
 scale: 1
 num_gpu: 2  # set num_gpu: 0 for cpu mode
@@ -8,16 +8,19 @@ num_gpu: 2  # set num_gpu: 0 for cpu mode
 # dataset and data loader settings
 datasets:
   train:
-    name: FlareX
-    type: FlareX_Pair_Loader
+    name: Flare7Kpp
+    type: Flare7kpp_Pair_Loader
     image_path: dataset/Flickr24K
-    flare_dict:
-      flare2d_dict: dataset/FlareX/Flare2D/Compound_Flare
-      flare3d_dict: dataset/FlareX/Flare3D/Flare_Img
+    scattering_dict:
+      Flare7k_scattering: dataset/Flare7Kpp/Flare7K/Scattering_Flare/Compound_Flare
+      Real_scattering1: dataset/Flare7Kpp/Flare-R/Compound_Flare
+    reflective_dict: 
+      Flare7k_reflective: ~
+      Real_reflective1: ~
     light_dict:
-      light2d_dict: dataset/FlareX/Flare2D/Light_Source
-      light3d_dict: dataset/FlareX/Flare3D/Light_Img
-    data_ratio: [0.5,0.5] # or [0.6, 0.4], only a ratio is enough
+      Flare7k_light: dataset/Flare7Kpp/Flare7K/Scattering_Flare/Light_Source
+      Real_light1: dataset/Flare7Kpp/Flare-R/Light_Source
+    data_ratio: [1, 0] # or [0.6, 0.4], only a ratio is enough
     transform_base:
       img_size: 512
     transform_flare:
@@ -45,11 +48,18 @@ datasets:
 
 # network structures
 network_g:
-  type: HINet
-  img_size: 512
-  img_ch: 6
-  output_ch: 6
-  multi_stage: 1
+  type: Restormer
+  img_ch: 3
+  output_ch: 3
+  dim: 16
+  num_blocks: [4,6,6,8]
+  num_refinement_blocks: 1
+  heads: [1,2,4,8]
+  ffn_expansion_factor: 2.66
+  bias: False
+  LayerNorm_type: WithBias
+  dual_pixel_task: False
+
 # path
 path:
   pretrain_network_g: ~

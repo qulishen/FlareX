@@ -1,23 +1,20 @@
 # general settings
-name: Uformer_baseline_option.yml
+name: FlareRemoval_Uformer_6ch
 model_type: DeflareModel
 scale: 1
-num_gpu: 2  # set num_gpu: 0 for cpu mode
-# manual_seed: 0
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
 
 # dataset and data loader settings
 datasets:
   train:
-    name: FlareX
-    type: FlareX_Pair_Loader
+    name: Flare7K
+    type: Flare_Pair_Loader
     image_path: dataset/Flickr24K
-    flare_dict:
-      flare2d_dict: dataset/FlareX/Flare2D/Compound_Flare
-      flare3d_dict: dataset/FlareX/Flare3D/Flare_Img
-    light_dict:
-      light2d_dict: dataset/FlareX/Flare2D/Light_Source
-      light3d_dict: dataset/FlareX/Flare3D/Light_Img
-    data_ratio: [0.5,0.5] # or [0.6, 0.4], only a ratio is enough
+    scattering_dict:
+      Flare7K_scattering: dataset/Flare7k/Scattering_Flare/Compound_Flare
+    reflective_dict:
+      Flare7K_reflective: ~
     transform_base:
       img_size: 512
     transform_flare:
@@ -26,8 +23,6 @@ datasets:
       translate: 300
       shear: 20
     mask_type: ~
-
-
     
     # data loader
     use_shuffle: true
@@ -36,13 +31,15 @@ datasets:
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
 
+  # Validation data is not provided in our Flare7K dataset, you can generate by yourself
   val:
     name: flare_test
     type: Image_Pair_Loader
-    dataroot_gt: dataset/Flare7Kpp/test_data/real/gt/
-    dataroot_lq: dataset/Flare7Kpp/test_data/real/input/
+    dataroot_gt: dataset/Flare7k/valid/gt
+    dataroot_lq: dataset/Flare7k/valid/input
     gt_size: 512
 
+# network structures
 network_g:
   type: Uformer
   img_size: 512
@@ -58,30 +55,29 @@ path:
 
 # training settings
 train:
-  scheduler:
-    type: MultiStepLR
-    milestones: [200000]
-    gamma: 0.5 
-
   optim_g:
     type: Adam
     lr: !!float 1e-4
     weight_decay: 0
     betas: [0.9, 0.99]
-  
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [200000]
+    gamma: 1.0
+
+  ema_decay: 0
+  total_iter: 1200000
+  warmup_iter: -1  # no warm up
+
   # losses
   l1_opt:
     type: L_Abs_pure
     loss_weight: 0.5
+
   perceptual:
     type: L_percepture
     loss_weight: 0.5
-
-  out_deflare: True
-  ema_decay: 0.9
-  total_iter: 3000000
-  warmup_iter: -1  # no warm up
-
 
 # validation settings
 val:
@@ -101,7 +97,7 @@ val:
 # logging settings
 logger:
   print_freq: 100
-  save_checkpoint_freq: !!float 5e3
+  save_checkpoint_freq: !!float 5e4
   use_tb_logger: true
   wandb:
     project: ~

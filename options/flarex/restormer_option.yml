@@ -17,7 +17,7 @@ datasets:
     light_dict:
       light2d_dict: dataset/FlareX/Flare2D/Light_Source
       light3d_dict: dataset/FlareX/Flare3D/Light_Img
-    data_ratio: [0.5,0.5] # or [0.6, 0.4], only a ratio is enough
+    data_ratio: [1, 0] # or [0.6, 0.4], only a ratio is enough
     transform_base:
       img_size: 512
     transform_flare:
@@ -27,12 +27,11 @@ datasets:
       shear: 20
     mask_type: ~
 
-
     
     # data loader
     use_shuffle: true
-    num_worker_per_gpu: 8
-    batch_size_per_gpu: 1
+    num_worker_per_gpu: 4
+    batch_size_per_gpu: 2
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
 
@@ -47,7 +46,7 @@ datasets:
 network_g:
   type: Restormer
   img_ch: 3
-  output_ch: 6
+  output_ch: 3
   dim: 16
   num_blocks: [4,6,6,8]
   num_refinement_blocks: 1

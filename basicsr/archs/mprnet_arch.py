@@ -1,3 +1,7 @@
+## Created by lishen qu 
+## comfirm the result of MPRNet of the Flare7K in 9/11
+##
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -256,8 +260,15 @@ class MPRNet(nn.Module):
         self.concat23  = conv(n_feat*2, n_feat+scale_orsnetfeats, kernel_size, bias=bias)
         self.tail     = conv(n_feat+scale_orsnetfeats, out_c, kernel_size, bias=bias)
         self.activation = nn.Sequential(nn.Sigmoid())
+        self.regressor = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(img_size*img_size,1),
+            nn.Sigmoid()
+        )
+        self.choice_conv = nn.Sequential(nn.Conv2d(out_c,int(out_c/2),kernel_size=1))
+
     def forward(self, x3_img):
-        
+      
         b,_,h,w, = x3_img.shape
 
         zeros = torch.zeros((b, 3, h, w), dtype=x3_img.dtype, device=x3_img.device)
@@ -346,7 +357,6 @@ class MPRNet(nn.Module):
         x3_cat = self.stage3_orsnet(x3_cat, feat2, res2)
 
         y = self.tail(x3_cat) + x3_img
-
         
         y=self.activation(y)
         

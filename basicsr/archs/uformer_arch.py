@@ -1131,7 +1131,7 @@ class CatCrossUformerLayer(nn.Module):
 
 @ARCH_REGISTRY.register()
 class Uformer(nn.Module):
-    def __init__(self, img_size=512, img_ch=3,output_ch=6,
+    def __init__(self, img_size=128, img_ch=3,output_ch=3,
                  embed_dim=32, depths=[2, 2, 2, 2, 2, 2, 2, 2, 2], num_heads=[1, 2, 4, 8, 16, 16, 8, 4, 2],
                  win_size=8, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
