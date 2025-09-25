@@ -53,7 +53,6 @@ Download the dataset from Kaggle:
 
 Place the dataset under the `dataset/` directory:
 
-
 ## Training
 
 Run distributed training with:
@@ -66,6 +65,10 @@ Run distributed training with:
 * `option`: additional arguments (e.g., config file)
 
 ---
+
+## Pretrained Model
+
+[Google Drive](https://drive.google.com/file/d/1oILbfk3ZZt_uctp1cY11Km9fWKsy0rAW/view?usp=sharing)
 
 ## Testing & Inference
 
