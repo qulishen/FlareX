@@ -4,7 +4,21 @@
 [![Dataset](https://img.shields.io/badge/Dataset-Kaggle-green)](https://www.kaggle.com/datasets/lishenqu/flarex)
 
 This repository contains the official implementation of our NeurIPS 2025 paper:  
-**FlareX: A Physics-Informed Dataset for Lens Flare Removal via 2D Synthesis and 3D Rendering**.  
+
+
+This repository contains the official implementation of our NeurIPS 2025 paper:  
+<p>
+<div><strong>FlareX: A Physics-Informed Dataset for Lens Flare Removal via 2D Synthesis and 3D Rendering</strong></div>
+<div><a href="https://qulishen.github.io/">Lishen Qu</a>, 
+   	<a href="https://qulishen.github.io/">Zhihao Liu</a>,
+    <a href="https://jspan.github.io/">Jinshan Pan</a>, 
+    <a href="https://joshyzhou.github.io/">Shihao Zhou</a>,
+    <a href="https://jingleishi.github.io/">Jinglei Shi</a>
+    <a href="https://github.com/Calvin11311">Duosheng Chen</a>
+    <a href="https://www4.comp.polyu.edu.hk/~cslzhang/">Lei Zhang</a>
+    <a href="https://cv.nankai.edu.cn/">Jufeng Yang</a>
+    </div>
+<div>Accepted to <strong>NeurIPS 2025</strong></div>
 
 ---
 
