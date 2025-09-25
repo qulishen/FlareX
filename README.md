@@ -82,11 +82,11 @@ python test_evaluate.py
 If you find this work useful, please cite:
 
 ```bibtex
-@inproceedings{qu2025flarex,
-  title={FlareX: A Physics-Informed Dataset for Lens Flare Removal via 2D Synthesis and 3D Rendering},
-  author={Lishen Qu, Zhihao Liu, Jinshan Pan, Shihao Zhou, Jinglei Shi, Duosheng Chen, Jufeng Yang},
-  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
-  year={2025}
+@inproceedings{FlareX_lishenqu,
+    title={FlareX: A Physics-Informed Dataset for Lens Flare Removal via 2D Synthesis and 3D Rendering},
+    author={Lishen, Qu and Zhihao, Liu and Jinshan, Pan and Shihao, Zhou and Jinglei, Shi and Duosheng, Chen and Jufeng, Yang},
+    booktitle={Advances in Neural Information Processing Systems},
+    year={2025}
 }
 ```
 ---
