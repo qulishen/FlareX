@@ -6,7 +6,7 @@
 <!-- [![GitHub Stars](https://img.shields.io/github/stars/qulishen/FlareX?style=social)](https://github.com/qulishen/FlareX) -->
 
 <p align="center">
-  <img src="logo.png" width="1000px"> 
+  <img src="logo1.png" width="1000px"> 
 </p>
 
 This repository contains the official implementation of our NeurIPS 2025 paper:  
