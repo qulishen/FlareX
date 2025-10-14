@@ -1,6 +1,6 @@
 # FlareX: A Physics-Informed Dataset for Lens Flare Removal via 2D Synthesis and 3D Rendering
 
-[![Paper](https://img.shields.io/badge/Paper-NeurIPS%202025-blue)](https://arxiv.org/abs/xxxx.xxxxx)  
+[![Paper](https://img.shields.io/badge/Paper-NeurIPS%202025-blue)](https://arxiv.org/abs/2510.09995)  
 [![Dataset](https://img.shields.io/badge/Dataset-Kaggle-green)](https://www.kaggle.com/datasets/lishenqu/flarex)
 
 
