@@ -387,7 +387,7 @@ class Paired_Flare_Image_Loader(data.Dataset):
 
 
 @DATASET_REGISTRY.register()
-class FlareX(Paired_Flare_Image_Loader):
+class FlareX_Pair_Loader(Paired_Flare_Image_Loader):
     def __init__(self, opt):
         Paired_Flare_Image_Loader.__init__(self, opt['image_path'], opt['image_pair_path'], opt['transform_base'],
                                            opt['transform_flare'], opt['mask_type'])

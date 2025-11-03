@@ -17,7 +17,6 @@ This repository contains the official implementation of our NeurIPS 2025 paper:
     <a href="https://joshyzhou.github.io/">Shihao Zhou</a>,
     <a href="https://jingleishi.github.io/">Jinglei Shi</a>,
     <a href="https://github.com/Calvin11311">Duosheng Chen</a>,
-    <a href="https://www4.comp.polyu.edu.hk/~cslzhang/">Lei Zhang</a>,
     <a href="https://cv.nankai.edu.cn/">Jufeng Yang</a>
     </div>
 <div>Accepted to <strong>NeurIPS 2025</strong></div>
