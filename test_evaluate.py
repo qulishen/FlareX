@@ -66,8 +66,8 @@ def compare_score(img1,img2,img_seg):
     for mask_type in mask_type_list:
         mask_area,img_mask=extract_mask(img_seg)[mask_type]
         if mask_area>0:
-            img_gt_masked=img1*img_mask
-            img_input_masked=img2*img_mask
+            img_gt_masked=img1 * (1 - img_mask)
+            img_input_masked=img2 * (1 - img_mask)
             input_mse=compare_mse(img_gt_masked, img_input_masked)/(255*255*mask_area)
             input_psnr=10 * np.log10((1.0 ** 2) / input_mse)
             metric_dict[mask_type]=input_psnr
@@ -321,7 +321,6 @@ if __name__ == "__main__":
     # demo(images_path,result_path,model_type,pretrain_dir)
     # eval the same time
     eval_arg = vars(args)
-    
     
     # calculate_metrics_new(eval_arg)
     calculate_metrics(eval_arg)

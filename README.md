@@ -46,7 +46,6 @@ git clone https://github.com/yourusername/FlareX.git
 cd FlareX
 pip install -r requirements.txt
 ````
-
 ---
 
 ## Dataset
@@ -69,9 +68,9 @@ Run distributed training with:
 
 ---
 
-## Pretrained Model
+## Test Results
 
-[Google Drive](https://drive.google.com/file/d/1oILbfk3ZZt_uctp1cY11Km9fWKsy0rAW/view?usp=sharing)
+[Google Drive](https://drive.google.com/drive/folders/14BrL5oNOWcd5WZMfjkpLg7js4yjnhY7P?usp=sharing)
 
 ## Testing & Inference
 
