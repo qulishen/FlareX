@@ -42,7 +42,7 @@ FlareX/
 Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/FlareX.git
+git clone https://github.com/qulishen/FlareX.git
 cd FlareX
 pip install -r requirements.txt
 ````
@@ -50,7 +50,13 @@ pip install -r requirements.txt
 
 ## Dataset
 
-Download the dataset from Kaggle:
+### Download the background dataset from Google Drive:
+
+👉 [Flickr24K Dataset](https://drive.google.com/file/d/1GNFGWfUbgXfELx5fZtjTjU2qqWnEa-Lr/view)
+
+(Optianal) To use the synthesis method with depth information. Using the [Dense Prediction Transformer](https://github.com/isl-org/DPT) to predict the depth information, and place the result in `dataset/24K_res`.
+
+### Download the flare dataset from Kaggle:
 👉 [FlareX Dataset](https://www.kaggle.com/datasets/lishenqu/flarex)
 
 Place the dataset under the `dataset/` directory:
