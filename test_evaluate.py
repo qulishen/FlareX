@@ -16,7 +16,7 @@ from basicsr.utils.flare_util import blend_light_source,get_args_from_json,save_
 from torch.distributions import Normal
 import torchvision.transforms as transforms
 import os
-from thop import profile
+# from thop import profile
 import argparse
 from skimage.metrics import peak_signal_noise_ratio as compare_psnr
 from skimage.metrics import structural_similarity as compare_ssim
@@ -31,7 +31,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--input',type=str,default=None)
 parser.add_argument('--output',type=str,default=None)
 parser.add_argument('--model_type',type=str,default='Uformer')
-parser.add_argument('--model_path',type=str,default='checkpoint/flare7kpp/net_g_last.pth')
+parser.add_argument('--model_path',type=str,default='weight/Uformer/Uformer_2d_3d_deep_1800.pth')
 parser.add_argument('--gt',type=str,default=None)
 parser.add_argument('--mask',type=str,default=None)
 # parser.add_argument('--flare7kpp', action='store_const', const=False, default=False) #use flare7kpp's inference method and output the light source directly.
@@ -66,8 +66,8 @@ def compare_score(img1,img2,img_seg):
     for mask_type in mask_type_list:
         mask_area,img_mask=extract_mask(img_seg)[mask_type]
         if mask_area>0:
-            img_gt_masked=img1 * (1 - img_mask)
-            img_input_masked=img2 * (1 - img_mask)
+            img_gt_masked=img1*(1-img_mask)
+            img_input_masked=img2*(1-img_mask)
             input_mse=compare_mse(img_gt_masked, img_input_masked)/(255*255*mask_area)
             input_psnr=10 * np.log10((1.0 ** 2) / input_mse)
             metric_dict[mask_type]=input_psnr
@@ -175,27 +175,82 @@ def calculate_metrics_new(args):
         score_dict['score']=1/3*(score_dict['glare']+score_dict['ghost']+score_dict['streak'])
         print(f"Score: {score_dict['score']}, G-PSNR: {score_dict['glare']}, S-PSNR: {score_dict['streak']}, GO-PSNR: {score_dict['ghost']}")
         
+# def calculate_metrics(args):
+#     loss_fn_alex = lpips.LPIPS(net='alex').cuda()
+#     gt_folder = args['gt'] + '/*'
+#     input_folder = os.path.join(result_path,"blend") + '/*'
+#     # input_folder = "/home/ubuntu/qls/FlareX/test_dataset/Ours/input"+'/*'
+#     gt_list = sorted(glob(gt_folder))
+#     input_list = sorted(glob(input_folder))
+#     if args['mask'] is not None:
+#         mask_folder = args['mask'] + '/*'
+#         mask_list= sorted(glob(mask_folder))
+
+#     assert len(gt_list) == len(input_list)
+#     n = len(gt_list)
+
+#     ssim, psnr, lpips_val = 0, 0, 0
+#     score_dict={'clean':0,'clean_num':0}
+#     file_path = os.path.join(result_path,'ans.txt')
+#     file = open(file_path,'w')
+#     for i in tqdm(range(n)):
+#         img_gt = io.imread(gt_list[i])
+#         img_input = io.imread(input_list[i])
+#         ssim0 = compare_ssim(img_gt, img_input, multichannel=True)
+#         ssim += ssim0
+#         psnr0 = compare_psnr(img_gt, img_input, data_range=255)
+#         psnr += psnr0
+#         lpips_val0 = compare_lpips(img_gt, img_input, loss_fn_alex)
+#         lpips_val += lpips_val0
+#         psnr_c = 0
+#         if args['mask'] is not None:
+#             img_seg=io.imread(mask_list[i])
+#             metric_dict=compare_score(img_gt,img_input,img_seg)
+#             for key in metric_dict.keys():
+#                 score_dict[key]+=metric_dict[key]
+#                 score_dict[key+'_num']+=1
+#             psnr_c = metric_dict['clean']
+#         text_content = f"{str(i)}, PSNR: {psnr0}, SSIM: {ssim0}, LPIPS: {lpips_val0},PSNR-Clean: {psnr_c} \n"
+#         file.write(text_content)
+#     ssim /= n
+#     psnr /= n
+#     lpips_val /= n
+    
+#     if args['mask'] is not None:
+#         for key in ['clean']:
+#             if score_dict[key+'_num'] == 0:
+#                 assert False, "Error, No mask in this type!"
+#             score_dict[key]/= score_dict[key+'_num']
+#         # print(f"PSNR-C: {score_dict['clean']}")
+        
+#     text_content = f"PSNR: {psnr}, SSIM: {ssim}, LPIPS: {lpips_val},PSNR-Clean: {score_dict['clean']} \n"
+#     print(text_content) 
+    
+
+#     # 写入文本到文件
+   
+#     file.write(text_content)
+
 def calculate_metrics(args):
     loss_fn_alex = lpips.LPIPS(net='alex').cuda()
     gt_folder = args['gt'] + '/*'
-    input_folder = os.path.join(result_path,"blend") + '/*'
-    # input_folder = "/home/ubuntu/qls/FlareX/test_dataset/Ours/input"+'/*'
+    input_folder = os.path.join(result_path, "blend") + '/*'
     gt_list = sorted(glob(gt_folder))
     input_list = sorted(glob(input_folder))
     if args['mask'] is not None:
         mask_folder = args['mask'] + '/*'
-        mask_list= sorted(glob(mask_folder))
-
+        mask_list = sorted(glob(mask_folder))
     assert len(gt_list) == len(input_list)
     n = len(gt_list)
-
     ssim, psnr, lpips_val = 0, 0, 0
-    score_dict={'clean':0,'clean_num':0}
-    file_path = os.path.join(result_path,'ans.txt')
-    file = open(file_path,'w')
+    ssim_nonmask = 0  # 1-mask 区域的 SSIM 累加
+    score_dict = {'clean': 0, 'clean_num': 0}
+    file_path = os.path.join(result_path, 'ans.txt')
+    file = open(file_path, 'w')
     for i in tqdm(range(n)):
-        img_gt = io.imread(gt_list[i])
+        img_gt = io.imread(gt_list[i])      # H,W,3  uint8
         img_input = io.imread(input_list[i])
+        # ---------------- 整图指标 ----------------
         ssim0 = compare_ssim(img_gt, img_input, multichannel=True)
         ssim += ssim0
         psnr0 = compare_psnr(img_gt, img_input, data_range=255)
@@ -203,34 +258,64 @@ def calculate_metrics(args):
         lpips_val0 = compare_lpips(img_gt, img_input, loss_fn_alex)
         lpips_val += lpips_val0
         psnr_c = 0
+        ssim_nonmask_i = 0  # 当前图像 1-mask 区域的 SSIM
         if args['mask'] is not None:
-            img_seg=io.imread(mask_list[i])
-            metric_dict=compare_score(img_gt,img_input,img_seg)
+            img_seg = io.imread(mask_list[i])   # H,W 或 H,W,3
+            # ---------- 构造 mask ----------
+            # 若为三通道，转为单通道
+            if img_seg.ndim == 3:
+                img_seg_gray = img_seg[..., 0]
+            else:
+                img_seg_gray = img_seg
+            # 归一化为 [0,1]，并二值化（根据标注情况可调整阈值）
+            mask = (img_seg_gray > 127).astype(np.float32)  # 阈值 0~255 中间，可按实际情况改
+            # 1-mask 区域（要算 SSIM 的区域）
+            inv_mask = 1.0 - mask   # 1 区域：非 mask；0 区域：mask
+            # 为了和 RGB 图相乘，扩展成 (H,W,1)
+            inv_mask_3 = inv_mask[..., None]  # (H,W,1)
+            # 只保留 1-mask 区域的像素，其它位置为 0
+            img_gt_nm = img_gt.astype(np.float32) * inv_mask_3
+            img_input_nm = img_input.astype(np.float32) * inv_mask_3
+            # 注意：SSIM 要在 float 上计算，可以直接用 0 填的区域
+            ssim_nonmask_i = compare_ssim(
+                img_gt_nm, img_input_nm, multichannel=True, data_range=255
+            )
+            ssim_nonmask += ssim_nonmask_i
+            # 保留原来的 mask 相关 psnr_c 计算
+            metric_dict = compare_score(img_gt, img_input, img_seg)
             for key in metric_dict.keys():
-                score_dict[key]+=metric_dict[key]
-                score_dict[key+'_num']+=1
+                score_dict[key] += metric_dict[key]
+                score_dict[key + '_num'] += 1
             psnr_c = metric_dict['clean']
-        text_content = f"{str(i)}, PSNR: {psnr0}, SSIM: {ssim0}, LPIPS: {lpips_val0},PSNR-Clean: {psnr_c} \n"
+        text_content = (
+            f"{str(i)}, PSNR: {psnr0}, SSIM: {ssim0}, "
+            f"LPIPS: {lpips_val0}, PSNR-Clean: {psnr_c}, "
+        )
+        if args['mask'] is not None:
+            text_content += f"SSIM-nonmask(1-mask): {ssim_nonmask_i}"
+        text_content += " \n"
         file.write(text_content)
+    # ---------------- 平均值 ----------------
     ssim /= n
     psnr /= n
     lpips_val /= n
-    
     if args['mask'] is not None:
+        ssim_nonmask /= n  # 所有图像的 1-mask 区域 SSIM 均值
         for key in ['clean']:
-            if score_dict[key+'_num'] == 0:
-                assert False, "Error, No mask in this type!"
-            score_dict[key]/= score_dict[key+'_num']
-        # print(f"PSNR-C: {score_dict['clean']}")
-        
-    text_content = f"PSNR: {psnr}, SSIM: {ssim}, LPIPS: {lpips_val},PSNR-Clean: {score_dict['clean']} \n"
-    print(text_content) 
-    
-
-    # 写入文本到文件
-   
+            if score_dict[key + '_num'] == 0:
+                raise ValueError("Error, No mask in this type!")
+            score_dict[key] /= score_dict[key + '_num']
+        text_content = (
+            f"PSNR: {psnr}, SSIM: {ssim}, LPIPS: {lpips_val}, "
+            f"PSNR-Clean: {score_dict['clean']}, "
+            f"SSIM-nonmask(1-mask): {ssim_nonmask} \n"
+        )
+    else:
+        text_content = f"PSNR: {psnr}, SSIM: {ssim}, LPIPS: {lpips_val} \n"
+    print(text_content)
     file.write(text_content)
-        
+    file.close()
+
 def extract_number(file_path):
     # 从路径末尾提取数字部分
     match = re.search(r'(\d+)', file_path[::-1])
@@ -318,7 +403,7 @@ if __name__ == "__main__":
     result_path=args.output
     pretrain_dir=args.model_path
 
-    # demo(images_path,result_path,model_type,pretrain_dir)
+    demo(images_path,result_path,model_type,pretrain_dir)
     # eval the same time
     eval_arg = vars(args)
     
