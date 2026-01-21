@@ -263,21 +263,23 @@ class Flare7kpp_Pair_Loader(Flare_Image_Loader):
 	def __init__(self, opt):
 		Flare_Image_Loader.__init__(self,opt['image_path'],opt['transform_base'],opt['transform_flare'],opt['mask_type'])
 		scattering_dict=opt['scattering_dict']
-		reflective_dict=opt['reflective_dict']
+		# reflective_dict=opt['reflective_dict']
 		light_dict=opt['light_dict']
-
-		# defualt not use light mask if opt['use_light_mask'] is not declared
-		if 'data_ratio' not in opt or len(opt['data_ratio'])==0:
-			self.data_ratio = [1] * len(scattering_dict)
-		else:
-			self.data_ratio = opt['data_ratio']
 
 		if len(scattering_dict) !=0:
 			for key in scattering_dict.keys():
 				self.load_scattering_flare(key,scattering_dict[key])
-		if len(reflective_dict) !=0:
-			for key in reflective_dict.keys():
-				self.load_reflective_flare(key,reflective_dict[key])
+		# if len(reflective_dict) !=0:
+		# 	for key in reflective_dict.keys():
+		# 		self.load_reflective_flare(key,reflective_dict[key])
 		if len(light_dict) !=0:
 			for key in light_dict.keys():
 				self.load_light_source(key,light_dict[key])
+		# Set data_ratio after loading flare_list to ensure length matches
+		if 'data_ratio' not in opt or len(opt['data_ratio']) == 0:
+			self.data_ratio = [1] * len(self.flare_list)
+		else:
+			self.data_ratio = opt['data_ratio']
+			if len(self.data_ratio) != len(self.flare_list):
+				print(f"WARNING: data_ratio length ({len(self.data_ratio)}) does not match flare_list length ({len(self.flare_list)}). Using uniform ratio.")
+				self.data_ratio = [1] * len(self.flare_list)

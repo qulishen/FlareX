@@ -1,5 +1,5 @@
 # general settings
-name: HINet_baseline_option.yml
+name: Restormer_baseline_option.yml
 model_type: DeflareModel
 scale: 1
 num_gpu: 2  # set num_gpu: 0 for cpu mode
@@ -8,19 +8,17 @@ num_gpu: 2  # set num_gpu: 0 for cpu mode
 # dataset and data loader settings
 datasets:
   train:
-    name: Flare7Kpp
-    type: Flare7kpp_Pair_Loader
+    name: FlareX
+    type: FlareX_Pair_Loader
+    image_pair_path:
+      dataroot_gt: dataset/FlareX/Flare3D/gt
+      dataroot_lq: dataset/FlareX/Flare3D/input
     image_path: dataset/Flickr24K
     scattering_dict:
-      Flare7k_scattering: dataset/Flare7Kpp/Flare7K/Scattering_Flare/Compound_Flare
-      Real_scattering1: dataset/Flare7Kpp/Flare-R/Compound_Flare
-    reflective_dict: 
-      Flare7k_reflective: ~
-      Real_reflective1: ~
+      Flare2D: dataset/FlareX/Flare2D/input
     light_dict:
-      Flare7k_light: dataset/Flare7Kpp/Flare7K/Scattering_Flare/Light_Source
-      Real_light1: dataset/Flare7Kpp/Flare-R/Light_Source
-    data_ratio: [1, 0] # or [0.6, 0.4], only a ratio is enough
+      Flare2d_light: dataset/FlareX/Flare2D/gt
+    data_ratio: [1,0] # or [0.6, 0.4], only a ratio is enough
     transform_base:
       img_size: 512
     transform_flare:
@@ -30,11 +28,9 @@ datasets:
       shear: 20
     mask_type: ~
 
-
-    
     # data loader
     use_shuffle: true
-    num_worker_per_gpu: 4
+    num_worker_per_gpu: 8
     batch_size_per_gpu: 2
     dataset_enlarge_ratio: 1
     prefetch_mode: ~
@@ -42,17 +38,24 @@ datasets:
   val:
     name: flare_test
     type: Image_Pair_Loader
-    dataroot_gt: dataset/Flare7Kpp/test_data/real/gt/
-    dataroot_lq: dataset/Flare7Kpp/test_data/real/input/
+    dataroot_gt: test_dataset/Flare7K/gt
+    dataroot_lq: test_dataset/Flare7K/input
     gt_size: 512
 
 # network structures
 network_g:
-  type: HINet
-  img_size: 512
+  type: Restormer
   img_ch: 3
-  output_ch: 6
-  multi_stage: 1
+  output_ch: 3
+  dim: 16
+  num_blocks: [4,6,6,8]
+  num_refinement_blocks: 1
+  heads: [1,2,4,8]
+  ffn_expansion_factor: 2.66
+  bias: False
+  LayerNorm_type: WithBias
+  dual_pixel_task: False
+
 # path
 path:
   pretrain_network_g: ~
